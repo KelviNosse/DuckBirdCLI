@@ -1,11 +1,28 @@
 package com.duckbird.dbcli.commands;
 
+import com.beust.jcommander.*;
+
 public class Help implements Command {
-    public void execute() {
-        System.out.println("You are viewing the help command.");
+    @Parameter(names="-command", description = "Shows the specified command help")
+    private String command;
+
+    public void execute(String[] args, JCommander jc) {
+        try {
+            jc.parse(args);
+            //do more things
+            if(this.command != null){
+                //show default help => list all commands
+            }
+        }catch(Exception e){
+            System.out.println("Argument invalid!");
+        }
+    }
+
+    public String getName(){
+        return "help";
     }
 
     public boolean compare(String command){
-        return "help".equalsIgnoreCase(command);
+        return this.getName().contentEquals(command.toLowerCase());
     }
 }
