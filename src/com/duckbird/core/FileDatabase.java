@@ -1,4 +1,7 @@
 package com.duckbird.core;
+import com.duckbird.core.errors.InvalidBlockSize;
+import com.duckbird.core.errors.InvalidDiskSize;
+
 import static com.duckbird.core.shared.Utils.*;
 
 import java.io.File;
@@ -9,13 +12,14 @@ public class FileDatabase {
     public String name;
     public String formattedSize;
     public String path;
-    public long size;
+    public long size, blocksize;
     private RandomAccessFile file;
 
-    public FileDatabase(String name, String path, long size){
+    public FileDatabase(String name, String path, long size, int blocksize) throws InvalidBlockSize, InvalidDiskSize {
         this.name = name;
-        this.size = size;
+        this.size = checkValidSize(size);
         this.path = path;
+        this.blocksize = checkValidBlockSize(blocksize, size);
         this.formattedSize = formatFileSize(size);
     }
 

@@ -1,4 +1,7 @@
 package com.duckbird.core.shared;
+import com.duckbird.core.errors.InvalidBlockSize;
+import com.duckbird.core.errors.InvalidDiskSize;
+
 import java.io.File;
 import java.text.DecimalFormat;
 
@@ -57,6 +60,17 @@ public class Utils {
                 else System.out.println("Invalid input size!");
         }
         return -1;
+    }
+
+    public static int checkValidBlockSize(int blocksize, long disksize) throws InvalidBlockSize {
+        if(blocksize >= disksize || blocksize < 0) throw new InvalidBlockSize("Size of blocks is invalid!");
+        if(blocksize % 2 != 0) throw new InvalidBlockSize("Block size must be divisible by 2");
+        return blocksize;
+    }
+
+    public static long checkValidSize(long size) throws InvalidDiskSize {
+        if(size < 0) throw  new InvalidDiskSize("Size of disk is invalid!");
+        return size;
     }
 
     private Utils() {}
