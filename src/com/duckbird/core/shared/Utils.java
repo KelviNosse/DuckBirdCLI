@@ -53,7 +53,7 @@ public class Utils {
                 return toLong(number) * 1024;
             default:
                 if(!size.chars().anyMatch(Character::isLetter))
-                    return toLong(number);
+                    return toLong(size);
                 else System.out.println("Invalid input size!");
         }
         return -1;
