@@ -10,6 +10,8 @@ public class Cli {
     public static List createCommands(){
         List<Command> queue = new ArrayList<>();
         queue.add(new Help());
+        queue.add(new CreateDB());
+        queue.add(new DeleteDB());
         return queue;
     }
 
