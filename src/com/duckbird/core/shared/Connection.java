@@ -8,5 +8,8 @@ public class Connection {
     public static FileDatabase getDatabase() {
         return instance.database;
     }
+    public static void setDatabase(FileDatabase db){
+        instance.database = db;
+    }
     private Connection() {}
 }

@@ -7,6 +7,9 @@ import java.text.DecimalFormat;
 
 public class Utils {
     private static Utils instance = new Utils();
+    public static int REGISTERS = 500;
+
+    public static int MAGIC_NUMBER = 0xDEADCAFE;
 
     public static Utils getInstance() {
         return instance;
