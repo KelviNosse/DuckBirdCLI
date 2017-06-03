@@ -41,6 +41,6 @@ public class FileDatabase {
     }
 
     public void connect(String dbName) throws FileNotFoundException {
-        this.file = new RandomAccessFile(dbName, "rwd");
+        this.file = new RandomAccessFile(dbName, "rw");
     }
 }

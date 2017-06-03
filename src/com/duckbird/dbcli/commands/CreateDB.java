@@ -36,6 +36,7 @@ public class CreateDB implements Command{
         }catch(InvalidBlockSize e){
             System.out.println(e.getMessage());
         }catch(Exception e){
+            e.printStackTrace();
             System.out.println(e.getMessage());
             System.out.println("Invalid arguments!\nRun => help -name "+this.getName()+" to view usage.");
         }

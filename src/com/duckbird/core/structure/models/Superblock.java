@@ -11,11 +11,16 @@ public class Superblock {
     private long disksize, blocksize;
     private int table_count;
     private RandomAccessFile db;
+    private int tableLimit;
+    public int used_size = 0;
+    public int blocks_amount;
     public Superblock(String name, long disksize, long blocksize, int table_count){
         this.name = name;
         this.disksize = disksize;
         this.blocksize = blocksize;
         this.table_count = table_count;
+        this.tableLimit = 0;
+        this.blocks_amount = (int)Math.ceil(((float)disksize/blocksize));
     }
 
     public void write() throws IOException {
@@ -25,8 +30,14 @@ public class Superblock {
         db.writeChars(this.name);
         db.writeLong(this.disksize);
         db.writeLong(this.blocksize);
+        db.writeInt(this.used_size);
         db.writeInt(REGISTERS);
         db.writeInt(this.table_count);
+        db.writeInt(this.tableLimit);
         db.getFD().sync();
+    }
+
+    public int getAvailableSize(){
+        return (int) (float)(this.disksize - this.used_size);
     }
 }

@@ -2,7 +2,8 @@ package com.duckbird.core.shared;
 import com.duckbird.core.errors.InvalidBlockSize;
 import com.duckbird.core.errors.InvalidDiskSize;
 
-import java.io.File;
+import java.io.*;
+import java.nio.ByteBuffer;
 import java.text.DecimalFormat;
 
 public class Utils {
@@ -74,6 +75,46 @@ public class Utils {
     public static long checkValidSize(long size) throws InvalidDiskSize {
         if(size < 0) throw  new InvalidDiskSize("Size of disk is invalid!");
         return size;
+    }
+
+    public static byte[] toByteArray(Object obj) throws IOException {
+        byte[] bytes;
+        ByteArrayOutputStream bos = null;
+        ObjectOutputStream oos = null;
+        try {
+            bos = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(bos);
+            oos.writeObject(obj);
+            oos.flush();
+            bytes = bos.toByteArray();
+        } finally {
+            if (oos != null) {
+                oos.close();
+            }
+            if (bos != null) {
+                bos.close();
+            }
+        }
+        return bytes;
+    }
+
+    public static Object toObject(byte[] bytes) throws IOException, ClassNotFoundException {
+        Object obj = null;
+        ByteArrayInputStream bis = null;
+        ObjectInputStream ois = null;
+        try {
+            bis = new ByteArrayInputStream(bytes);
+            ois = new ObjectInputStream(bis);
+            obj = ois.readObject();
+        } finally {
+            if (bis != null) {
+                bis.close();
+            }
+            if (ois != null) {
+                ois.close();
+            }
+        }
+        return obj;
     }
 
     private Utils() {}
