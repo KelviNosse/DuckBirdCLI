@@ -1,3 +1,6 @@
+#ignore duck files
+*.duck
+
 # Compiled class file
 *.class
 

@@ -1,6 +1,7 @@
 package com.duckbird.core.shared;
 import com.duckbird.core.errors.InvalidBlockSize;
 import com.duckbird.core.errors.InvalidDiskSize;
+import com.duckbird.core.structure.models.Bitmap;
 
 import java.io.*;
 import java.nio.ByteBuffer;
@@ -115,6 +116,16 @@ public class Utils {
             }
         }
         return obj;
+    }
+
+    public static Bitmap fromByteArray(byte[] bytes) {
+        Bitmap bits = new Bitmap();
+        for (int i=0; i<bytes.length*8; i++) {
+            if ((bytes[bytes.length-i/8-1]&(1<<(i%8))) > 0) {
+                bits.set(i);
+            }
+        }
+        return bits;
     }
 
     private Utils() {}

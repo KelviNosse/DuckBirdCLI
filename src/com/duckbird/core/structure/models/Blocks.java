@@ -13,7 +13,7 @@ public class Blocks {
     }
 
     public void allocate() throws IOException {
-        RandomAccessFile db_file = Connection.getDatabase().file;
+        RandomAccessFile db_file = Connection.getDatabase().getFile();
         int blocks = Connection.getSuperblock().blocks_amount - this.blocksUsed;
         for(int i = 0; i < blocks; i++){
             db_file.seek(this.offset + (i*Connection.getDatabase().blocksize));

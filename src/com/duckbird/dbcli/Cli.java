@@ -12,6 +12,7 @@ public class Cli {
         queue.add(new Help());
         queue.add(new CreateDB());
         queue.add(new DeleteDB());
+        queue.add(new Connect());
         return queue;
     }
 

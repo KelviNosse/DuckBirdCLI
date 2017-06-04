@@ -2,16 +2,22 @@ package com.duckbird.dbcli.commands;
 
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
+import com.duckbird.core.shared.IOStreamDB;
+
+import java.io.File;
 
 public class Connect implements Command{
-    @Parameter(names="-path", description = "Path/Name of the db to connect")
+    @Parameter(names="-path", description = "Path with name of the db to connect.")
     private String path;
 
     public void execute(String[] args, JCommander jc) {
         try{
             jc.parse(args);
-            //todo
-            this.path = "";
+            if(path != null){
+                IOStreamDB io = new IOStreamDB(new File(path));
+                io.load();
+                this.path = "";
+            }else System.out.println("You need to specify the path!");
         }catch(Exception e){
             e.printStackTrace();
             System.out.println(e.getMessage());

@@ -12,6 +12,10 @@ public class DirTable {
         this.init();
     }
 
+    public DirTable(TableEntries[] tableEntries){
+        this.tableEntries = tableEntries;
+    }
+
     private void init(){
         for(int i = 0; i < this.Length(); i++)
             this.tableEntries[i] = new TableEntries();
@@ -28,7 +32,7 @@ public class DirTable {
     }
 
     public void writeOnDisk() throws IOException {
-        RandomAccessFile db_file = Connection.getDatabase().file;
+        RandomAccessFile db_file = Connection.getDatabase().getFile();
         db_file.seek(this.offset);
         for(int i = 0; i < this.tableEntries.length; i++){
             db_file.writeChars(new String(this.tableEntries[i].table_name));

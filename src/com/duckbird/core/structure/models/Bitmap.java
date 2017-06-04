@@ -15,15 +15,22 @@ public class Bitmap extends BitSet{
         this.size = size;
     }
 
+    public Bitmap(){
+        super();
+    }
+
+
     public void toggle(int index){
         this.flip(index);
     }
 
     public void writeOnDisk() throws IOException {
-        RandomAccessFile db_file = Connection.getDatabase().file;
+        RandomAccessFile db_file = Connection.getDatabase().getFile();
         db_file.seek(this.offset);
+        System.out.println("File pointer: "+db_file.getFilePointer());
         byte[] bytes = this.toByteArray();
         db_file.write(bytes);
+        System.out.println("File pointer: "+db_file.getFilePointer());
         db_file.getFD().sync();
     }
 
@@ -33,8 +40,8 @@ public class Bitmap extends BitSet{
 
     @Override
     public String toString(){
-        final StringBuilder buffer = new StringBuilder(this.size);
-        IntStream.range(0, this.size).mapToObj(i -> get(i) ? '1' : '0').forEach(buffer::append);
+        final StringBuilder buffer = new StringBuilder(this.size());
+        IntStream.range(0, this.size()).mapToObj(i -> get(i) ? '1' : '0').forEach(buffer::append);
         return buffer.toString();
     }
 

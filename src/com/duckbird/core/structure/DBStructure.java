@@ -50,5 +50,6 @@ public class DBStructure {
         Connection.getDirTable().offset = this.blocksize + (bmapBlocks*this.blocksize);
         Connection.getBlocks().offset = this.blocksize + (bmapBlocks*this.blocksize) + (dirTableBlocks*this.blocksize);
         Connection.getBlocks().blocksUsed = 1 + bmapBlocks + dirTableBlocks;
+        System.out.println("Expected bitmap size: "+(bmapBlocks*this.blocksize));
     }
 }
