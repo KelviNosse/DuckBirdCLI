@@ -13,6 +13,7 @@ public class Cli {
         queue.add(new CreateDB());
         queue.add(new DeleteDB());
         queue.add(new Connect());
+        queue.add(new RunSQL());
         return queue;
     }
 
