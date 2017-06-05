@@ -2,6 +2,7 @@ package com.duckbird.core.sqltasks.handlers;
 
 import com.duckbird.core.errors.TableNotFound;
 import com.duckbird.core.shared.Connection;
+import com.duckbird.core.sqltasks.models.DBColumns;
 import com.duckbird.core.structure.models.DirTable;
 import net.sf.jsqlparser.statement.select.SelectItem;
 
@@ -37,7 +38,11 @@ public class Selection {
                 int length = db_file.readInt();
                 String col_name = "";
                 for (int k = 0; k < length; k++) col_name += db_file.readChar();
-                System.out.println("Column name?: " + col_name);
+                System.out.println("Col name: "+col_name);
+                int type_len = db_file.readInt();
+                String type_name = "";
+                for(int k = 0; k < type_len; k++) type_name += db_file.readChar();
+                System.out.println("Type: "+type_name);
             }
         }
     }

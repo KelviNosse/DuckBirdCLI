@@ -60,8 +60,9 @@ public class IOStreamDB extends RandomAccessFile{
         int blocks = Connection.getSuperblock().blocks_amount;
         int size = (int)Math.ceil(((float)blocks/8));
         int bytes_size = (int)Math.ceil(((float)size/Connection.getSuperblock().blocksize));
-        byte[] bytes = new byte[bytes_size];
+        byte[] bytes = new byte[bytes_size*8];
         this.read(bytes);
+        reverse(bytes);
         Bitmap bmap = fromByteArray(bytes);
         bmap.offset = (int) (long) Connection.getSuperblock().blocksize;
         return bmap;

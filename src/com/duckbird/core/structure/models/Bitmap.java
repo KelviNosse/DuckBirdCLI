@@ -39,6 +39,17 @@ public class Bitmap extends BitSet{
         return -1;
     }
 
+//    @Override
+//    public byte[] toByteArray(){
+//        byte[] bytes = new byte[this.size()/8+1];
+//        for(int i = 0; i < this.size(); i++){
+//            if(this.get(i)){
+//                bytes[bytes.length - i/8-1] |= 1 << (i%8);
+//            }
+//        }
+//        return bytes;
+//    }
+
     @Override
     public String toString(){
         final StringBuilder buffer = new StringBuilder(this.size());

@@ -90,6 +90,22 @@ public class Utils {
         return bits;
     }
 
+    public static void reverse(byte[] array) {
+        if (array == null) {
+            return;
+        }
+        int i = 0;
+        int j = array.length - 1;
+        byte tmp;
+        while (j > i) {
+            tmp = array[j];
+            array[j] = array[i];
+            array[i] = tmp;
+            j--;
+            i++;
+        }
+    }
+
     public void SetSharedMetadata(int num_blocks, int bmap_size, int dir_table_size){
         this.NUM_BLOCKS = num_blocks;
         this.BITMAP_SIZE = bmap_size;

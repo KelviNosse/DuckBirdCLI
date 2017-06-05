@@ -21,9 +21,9 @@ public class DBColumns {
         return size;
     }
 
-    public int labelSize(){
+    public int sizeOnDisk(){
         int size = 0;
-        for(int i = 0; i < columns.size(); i++) size += columns.get(i).name.length() + 4;
+        for(int i = 0; i < columns.size(); i++) size += columns.get(i).name.length() + 4 + columns.get(i).type.name().length() + 4;
         return size;
     }
 

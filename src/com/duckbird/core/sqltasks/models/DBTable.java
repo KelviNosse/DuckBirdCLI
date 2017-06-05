@@ -24,7 +24,7 @@ public class DBTable {
 
     public void writeColumns() throws IOException, InvalidDBFile {
         List<DBColumn> col_list = columns.getList();
-        int columnsBlocks = (int)Math.ceil(((float)columns.labelSize()/Connection.getSuperblock().blocksize));
+        int columnsBlocks = (int)Math.ceil(((float)columns.sizeOnDisk()/Connection.getSuperblock().blocksize));
         int offset = 0;
         for(int c = 0; c < columnsBlocks; c++){
             int freeBlock = Connection.getBitmap().freeBlock();
@@ -35,8 +35,11 @@ public class DBTable {
                 this.file.writeInt(column_length);
                 String column_name = col_list.get(i).name;
                 this.file.writeChars(column_name);
+                String type = col_list.get(i).type.name();
+                this.file.writeInt(type.length());
+                this.file.writeChars(type);
             }
-            Connection.getBitmap().toggle(freeBlock);
+            Connection.getBitmap().set(freeBlock);
         }
         this.file.getFD().sync();
         Connection.getSuperblock().used_size += columnsBlocks*Connection.getSuperblock().blocksize;
@@ -47,6 +50,8 @@ public class DBTable {
         Connection.getSuperblock().table_count += 1;
         Connection.getDirTable().addTableEntry(this.name, offset, metadata);
         Connection.getSuperblock().write();
+        System.out.println("Bitmap before write");
+        System.out.println(Connection.getBitmap().toString());
         Connection.getBitmap().writeOnDisk();
         Connection.getDirTable().writeOnDisk();
         Connection.reload();
