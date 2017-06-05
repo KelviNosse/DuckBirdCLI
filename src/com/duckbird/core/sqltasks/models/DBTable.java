@@ -3,6 +3,7 @@ package com.duckbird.core.sqltasks.models;
 import com.duckbird.core.errors.InvalidDBFile;
 import com.duckbird.core.shared.Connection;
 import com.duckbird.core.structure.models.TableMetadata;
+import dnl.utils.text.table.TextTable;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -59,5 +60,13 @@ public class DBTable {
 
     public void print(){
         //Pretty print a table
+        List<DBColumn> columns = this.columns.getList();
+        String[] columnNames = new String[columns.size()];
+        Object[][] data = new Object[0][];
+        for(int i = 0; i < columns.size(); i++){
+            columnNames[i] = columns.get(i).name;
+        }
+        TextTable tt = new TextTable(columnNames, data);
+        tt.printTable();
     }
 }
