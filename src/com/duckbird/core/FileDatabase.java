@@ -24,6 +24,14 @@ public class FileDatabase {
         this.formattedSize = formatFileSize(size);
     }
 
+    public FileDatabase(){
+        this.name = Connection.getSuperblock().name;
+        this.size = Connection.getSuperblock().disksize;
+        this.path = ""; //Optional save in superblock the path of the file?
+        this.blocksize = Connection.getSuperblock().blocksize;
+        this.formattedSize = formatFileSize(Connection.getSuperblock().disksize);
+    }
+
     public void allocate() {
         try{
             this.connect(this.path+"/"+this.name+".duck");

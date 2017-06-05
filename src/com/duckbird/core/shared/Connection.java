@@ -1,10 +1,15 @@
 package com.duckbird.core.shared;
 
 import com.duckbird.core.FileDatabase;
+import com.duckbird.core.errors.InvalidDBFile;
 import com.duckbird.core.structure.models.Bitmap;
 import com.duckbird.core.structure.models.Blocks;
 import com.duckbird.core.structure.models.DirTable;
 import com.duckbird.core.structure.models.Superblock;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 
 public class Connection {
     private static Connection instance = new Connection();
@@ -34,6 +39,13 @@ public class Connection {
     }
     public static void setBlocks(Blocks blocks){
         instance.blocks = blocks;
+    }
+    public static boolean isConnected(){
+        return (getDatabase() != null) && (getBitmap() != null) && (getDirTable() != null);
+    }
+    public static void reload() throws IOException, InvalidDBFile {
+        IOStreamDB db = new IOStreamDB(new File(Utils.getInstance().file_path));
+        db.load();
     }
     private Connection() {}
 }

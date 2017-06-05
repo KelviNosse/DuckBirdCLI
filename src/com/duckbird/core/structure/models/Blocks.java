@@ -16,8 +16,10 @@ public class Blocks {
         RandomAccessFile db_file = Connection.getDatabase().getFile();
         int blocks = Connection.getSuperblock().blocks_amount - this.blocksUsed;
         for(int i = 0; i < blocks; i++){
-            db_file.seek(this.offset + (i*Connection.getDatabase().blocksize));
-            db_file.writeInt((int)(long)(this.offset + ((i+1)*Connection.getDatabase().blocksize)));
+            int offset = (int) (this.offset + (i*Connection.getDatabase().blocksize));
+            db_file.seek(offset);
+            int nextBlock = (int)(long)(this.offset + ((i+1)*Connection.getDatabase().blocksize));
+            db_file.writeInt(nextBlock);
         }
         db_file.getFD().sync();
     }

@@ -2,6 +2,7 @@ package com.duckbird.core.structure;
 
 
 import com.duckbird.core.shared.Connection;
+import com.duckbird.core.shared.Utils;
 import com.duckbird.core.structure.models.*;
 
 import java.io.IOException;
@@ -50,6 +51,6 @@ public class DBStructure {
         Connection.getDirTable().offset = this.blocksize + (bmapBlocks*this.blocksize);
         Connection.getBlocks().offset = this.blocksize + (bmapBlocks*this.blocksize) + (dirTableBlocks*this.blocksize);
         Connection.getBlocks().blocksUsed = 1 + bmapBlocks + dirTableBlocks;
-        System.out.println("Expected bitmap size: "+(bmapBlocks*this.blocksize));
+        Utils.getInstance().SetSharedMetadata(this.num_blocks, bmapBlocks*this.blocksize, dirTableBlocks*this.blocksize);
     }
 }

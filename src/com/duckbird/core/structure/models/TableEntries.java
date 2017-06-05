@@ -14,6 +14,6 @@ public class TableEntries {
     }
 
     public int Size() {
-        return 25 + 4 + this.TableMetadata.Size();
+        return 25*2 + 4 + this.TableMetadata.Size();
     }
 }

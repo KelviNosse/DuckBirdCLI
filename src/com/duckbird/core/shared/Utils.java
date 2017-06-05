@@ -10,9 +10,11 @@ import java.text.DecimalFormat;
 public class Utils {
     private static Utils instance = new Utils();
     public static int REGISTERS = 500;
-
     public static int MAGIC_NUMBER = 0xDEADCAFE;
-
+    public int NUM_BLOCKS = 0;
+    public int BITMAP_SIZE = 0;
+    public int DIR_TABLE_SIZE = 0;
+    public String file_path;
     public static Utils getInstance() {
         return instance;
     }
@@ -78,46 +80,6 @@ public class Utils {
         return size;
     }
 
-    public static byte[] toByteArray(Object obj) throws IOException {
-        byte[] bytes;
-        ByteArrayOutputStream bos = null;
-        ObjectOutputStream oos = null;
-        try {
-            bos = new ByteArrayOutputStream();
-            oos = new ObjectOutputStream(bos);
-            oos.writeObject(obj);
-            oos.flush();
-            bytes = bos.toByteArray();
-        } finally {
-            if (oos != null) {
-                oos.close();
-            }
-            if (bos != null) {
-                bos.close();
-            }
-        }
-        return bytes;
-    }
-
-    public static Object toObject(byte[] bytes) throws IOException, ClassNotFoundException {
-        Object obj = null;
-        ByteArrayInputStream bis = null;
-        ObjectInputStream ois = null;
-        try {
-            bis = new ByteArrayInputStream(bytes);
-            ois = new ObjectInputStream(bis);
-            obj = ois.readObject();
-        } finally {
-            if (bis != null) {
-                bis.close();
-            }
-            if (ois != null) {
-                ois.close();
-            }
-        }
-        return obj;
-    }
-
     public static Bitmap fromByteArray(byte[] bytes) {
         Bitmap bits = new Bitmap();
         for (int i=0; i<bytes.length*8; i++) {
@@ -126,6 +88,20 @@ public class Utils {
             }
         }
         return bits;
+    }
+
+    public void SetSharedMetadata(int num_blocks, int bmap_size, int dir_table_size){
+        this.NUM_BLOCKS = num_blocks;
+        this.BITMAP_SIZE = bmap_size;
+        this.DIR_TABLE_SIZE = dir_table_size;
+    }
+
+    public static boolean isCharArrayEmpty(char[] arr){
+        int count = 0;
+        for(int i = 0; i < arr.length; i++){
+            if(arr[i] == '\u0000') count++;
+        }
+        return (count == arr.length);
     }
 
     private Utils() {}

@@ -1,6 +1,9 @@
 package com.duckbird.core.shared;
 
+import com.duckbird.core.FileDatabase;
+import com.duckbird.core.errors.InvalidBlockSize;
 import com.duckbird.core.errors.InvalidDBFile;
+import com.duckbird.core.errors.InvalidDiskSize;
 import com.duckbird.core.structure.models.*;
 
 import java.io.File;
@@ -18,11 +21,11 @@ public class IOStreamDB extends RandomAccessFile{
     }
 
     public void load() throws IOException, InvalidDBFile {
-         System.out.println("Connecting...");
          Connection.setSuperblock(this.loadSuperblock());
          Connection.setBitmap(this.loadBitmap());
          Connection.setDirTable(this.loadDirTable());
-         System.out.println("Connected to db successfully :)");
+         Connection.setDatabase(new FileDatabase());
+         Connection.getDatabase().setFile(this);
     }
 
     private DirTable loadDirTable() throws IOException {
@@ -46,6 +49,9 @@ public class IOStreamDB extends RandomAccessFile{
         }
         DirTable dirTable = new DirTable(tableEntries);
         dirTable.offset = offset;
+        int dirTableBlocks = (int)Math.ceil(((float)dirTable.Size()/Connection.getSuperblock().blocksize));
+        System.out.println("Dir table blocks: "+dirTableBlocks);
+        Utils.getInstance().SetSharedMetadata(blocks, bmapBlocks*(int)Connection.getSuperblock().blocksize, dirTableBlocks*(int)Connection.getSuperblock().blocksize);
         return dirTable;
     }
 

@@ -1,5 +1,11 @@
 package com.duckbird.core.sqltasks;
 
+import com.duckbird.core.errors.ConnectionNotEstablished;
+import com.duckbird.core.errors.InvalidColumnType;
+import com.duckbird.core.errors.TableNotFound;
+import com.duckbird.core.shared.Connection;
+import com.duckbird.core.sqltasks.handlers.Selection;
+import com.duckbird.core.sqltasks.handlers.TableCreator;
 import jdk.nashorn.internal.runtime.ParserException;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
@@ -19,6 +25,8 @@ import net.sf.jsqlparser.statement.select.SelectBody;
 import net.sf.jsqlparser.statement.select.SelectItem;
 import net.sf.jsqlparser.statement.update.Update;
 import net.sf.jsqlparser.util.TablesNamesFinder;
+
+import java.io.IOException;
 import java.io.StringReader;
 import java.util.List;
 import java.util.Scanner;
@@ -29,6 +37,12 @@ public class SQLEditor extends CCJSqlParserManager{
     }
 
     public void run(){
+        if(!Connection.isConnected()) try {
+            throw new ConnectionNotEstablished();
+        } catch (ConnectionNotEstablished connectionNotEstablished) {
+            System.out.println(connectionNotEstablished.getMessage());
+            return;
+        }
         Scanner scanner = new Scanner(System.in);
         System.out.println("\b\b\b");
         System.out.println("DuckBird SQL Runner v1.0");
@@ -41,11 +55,17 @@ public class SQLEditor extends CCJSqlParserManager{
                 this.validateSQL(sql);
             } catch (JSQLParserException e) {
                 System.out.println("Sql invalid, or not supported :(");
+            }catch(InvalidColumnType e){
+                System.out.println(e.getMessage());
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (TableNotFound tableNotFound) {
+                System.out.println(tableNotFound.getMessage());
             }
         }   
     }
 
-    private void SelectHandler(Select statement){
+    private void SelectHandler(Select statement) throws IOException, TableNotFound {
         SelectBody body = statement.getSelectBody();
         if(body instanceof PlainSelect){
             //todo call select handler class to go execute tasks through this data
@@ -53,26 +73,24 @@ public class SQLEditor extends CCJSqlParserManager{
             List<SelectItem> selectedItems = select.getSelectItems();
             TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();
             List<String> tableList = tablesNamesFinder.getTableList(statement);
-            Expression expression = select.getWhere();
-            if(expression instanceof AndExpression){
-                //currently only support 'AND' expression once
-                AndExpression andExpression = (AndExpression)expression;
-                Expression leftExpression = andExpression.getLeftExpression();
-                Expression rightExpression = andExpression.getRightExpression();
-            }else{
-                //single expression
-            }
+            Selection selection = new Selection();
+            selection.show(selectedItems, tableList);
+//            Expression expression = select.getWhere();
+//            if(expression instanceof AndExpression){
+//                //currently only support 'AND' expression once
+//                AndExpression andExpression = (AndExpression)expression;
+//                Expression leftExpression = andExpression.getLeftExpression();
+//                Expression rightExpression = andExpression.getRightExpression();
+//            }else{
+//                //single expression
+//            }
         }
     }
 
-    private void CreateTableHandler(CreateTable ct){
-        //todo call create table handler class to go execute tasks through this data
-        System.out.println("Table name: "+ct.getTable().getName());
+    private void CreateTableHandler(CreateTable ct) throws InvalidColumnType {
         List<ColumnDefinition> cols = ct.getColumnDefinitions();
-        for(int i = 0; i < cols.size(); i++){
-            System.out.println("Col name: "+cols.get(i).getColumnName());
-            System.out.println("Col type: "+cols.get(i).getColDataType());
-        }
+        TableCreator tableCreator = new TableCreator();
+        tableCreator.create(ct.getTable().getName(), cols);
     }
 
     private void InsertHandler(Insert insert){
@@ -113,7 +131,7 @@ public class SQLEditor extends CCJSqlParserManager{
         System.out.println("Where: "+where.toString());
     }
 
-    private void validateSQL(String sql) throws JSQLParserException, ParserException {
+    private void validateSQL(String sql) throws JSQLParserException, ParserException, InvalidColumnType, IOException, TableNotFound {
         Statement statement = this.parse(new StringReader(sql));
         if(statement != null){
             System.out.println(statement.toString());

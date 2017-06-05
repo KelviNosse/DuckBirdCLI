@@ -27,15 +27,16 @@ public class Bitmap extends BitSet{
     public void writeOnDisk() throws IOException {
         RandomAccessFile db_file = Connection.getDatabase().getFile();
         db_file.seek(this.offset);
-        System.out.println("File pointer: "+db_file.getFilePointer());
         byte[] bytes = this.toByteArray();
         db_file.write(bytes);
-        System.out.println("File pointer: "+db_file.getFilePointer());
         db_file.getFD().sync();
     }
 
-    public void initOnDisk() throws IOException {
-        this.writeOnDisk();
+    public int freeBlock(){
+        for(int i = 0; i < this.size(); i++){
+            if(!this.get(i)) return i;
+        }
+        return -1;
     }
 
     @Override

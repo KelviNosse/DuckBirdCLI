@@ -3,6 +3,7 @@ package com.duckbird.dbcli.commands;
 import com.beust.jcommander.JCommander;
 import com.beust.jcommander.Parameter;
 import com.duckbird.core.shared.IOStreamDB;
+import com.duckbird.core.shared.Utils;
 
 import java.io.File;
 
@@ -15,7 +16,10 @@ public class Connect implements Command{
             jc.parse(args);
             if(path != null){
                 IOStreamDB io = new IOStreamDB(new File(path));
+                Utils.getInstance().file_path = path;
+                System.out.println("Connecting...");
                 io.load();
+                System.out.println("Connected to db successfully!");
                 this.path = "";
             }else System.out.println("You need to specify the path!");
         }catch(Exception e){

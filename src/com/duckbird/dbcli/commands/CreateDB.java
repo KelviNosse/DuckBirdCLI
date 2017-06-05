@@ -5,6 +5,7 @@ import com.beust.jcommander.Parameter;
 import com.duckbird.core.FileDatabase;
 import com.duckbird.core.errors.*;
 import com.duckbird.core.shared.Connection;
+import com.duckbird.core.shared.Utils;
 
 import static com.duckbird.core.shared.Utils.fromFormatToSize;
 
@@ -26,6 +27,7 @@ public class CreateDB implements Command{
                 long dbSize = fromFormatToSize(this.size);
                 int blockSize = (int)(long)fromFormatToSize(this.blocksize);
                 database = new FileDatabase(this.name, this.path, dbSize, blockSize);
+                Utils.getInstance().file_path = this.path + this.name;
                 database.allocate();
             }else
                 System.out.println("Size, name or blocksize are not specified.");
