@@ -1,9 +1,8 @@
 package com.duckbird.core.sqltasks;
 
-import com.duckbird.core.errors.ConnectionNotEstablished;
-import com.duckbird.core.errors.InvalidColumnType;
-import com.duckbird.core.errors.TableNotFound;
+import com.duckbird.core.errors.*;
 import com.duckbird.core.shared.Connection;
+import com.duckbird.core.sqltasks.handlers.Insertion;
 import com.duckbird.core.sqltasks.handlers.Selection;
 import com.duckbird.core.sqltasks.handlers.TableCreator;
 import jdk.nashorn.internal.runtime.ParserException;
@@ -61,6 +60,14 @@ public class SQLEditor extends CCJSqlParserManager{
                 e.printStackTrace();
             } catch (TableNotFound tableNotFound) {
                 System.out.println(tableNotFound.getMessage());
+            } catch (InvalidDBFile invalidDBFile) {
+                System.out.println(invalidDBFile.getMessage());
+            } catch (NoSuchFreeSpace noSuchFreeSpace) {
+                System.out.println(noSuchFreeSpace.getMessage());
+            } catch (IncorrectTableValues incorrectTableValues) {
+                System.out.println(incorrectTableValues.getMessage());
+            } catch (InvalidColumnValue invalidColumnValue) {
+                System.out.println(invalidColumnValue.getMessage());
             }
         }   
     }
@@ -68,7 +75,6 @@ public class SQLEditor extends CCJSqlParserManager{
     private void SelectHandler(Select statement) throws IOException, TableNotFound {
         SelectBody body = statement.getSelectBody();
         if(body instanceof PlainSelect){
-            //todo call select handler class to go execute tasks through this data
             PlainSelect select = (PlainSelect)body;
             List<SelectItem> selectedItems = select.getSelectItems();
             TablesNamesFinder tablesNamesFinder = new TablesNamesFinder();
@@ -93,17 +99,19 @@ public class SQLEditor extends CCJSqlParserManager{
         tableCreator.create(ct.getTable().getName(), cols);
     }
 
-    private void InsertHandler(Insert insert){
+    private void InsertHandler(Insert insert) throws NoSuchFreeSpace, IncorrectTableValues, InvalidDBFile, IOException, TableNotFound, InvalidColumnValue {
         //todo call insert into handler class to go execute tasks through this data
         System.out.println("Table name:"+insert.getTable().getName());
         List<Column> columns = insert.getColumns();
-        for(int i = 0; i < columns.size(); i++){
-            System.out.println("Column name: "+columns.get(i).getColumnName());
-        }
+//        for(int i = 0; i < columns.size(); i++){
+//            System.out.println("Column name: "+columns.get(i).getColumnName());
+//        }
         List<Expression> values = ((ExpressionList)insert.getItemsList()).getExpressions();
-        for(int i = 0; i < values.size(); i++){
-            System.out.println("Value: "+values.get(i).toString());
-        }
+//        for(int i = 0; i < values.size(); i++){
+//            System.out.println("Value: "+values.get(i).toString());
+//        }
+        Insertion insertion = new Insertion();
+        insertion.insert(insert.getTable().getName(), columns, values);
     }
 
     private void DropTableHandler(Drop drop){
@@ -131,7 +139,7 @@ public class SQLEditor extends CCJSqlParserManager{
         System.out.println("Where: "+where.toString());
     }
 
-    private void validateSQL(String sql) throws JSQLParserException, ParserException, InvalidColumnType, IOException, TableNotFound {
+    private void validateSQL(String sql) throws JSQLParserException, ParserException, InvalidColumnType, IOException, TableNotFound, NoSuchFreeSpace, InvalidDBFile, IncorrectTableValues, InvalidColumnValue {
         Statement statement = this.parse(new StringReader(sql));
         if(statement != null){
             System.out.println(statement.toString());

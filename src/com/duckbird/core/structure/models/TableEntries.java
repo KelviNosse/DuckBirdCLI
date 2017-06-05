@@ -3,6 +3,7 @@ package com.duckbird.core.structure.models;
 public class TableEntries {
     public char[] table_name = new char[25];
     public int block_offset = 0;
+    public int registers_offset = 0;
     public TableMetadata TableMetadata = new TableMetadata();
     public TableEntries(){
         this.table_name = new char[25];
@@ -14,6 +15,6 @@ public class TableEntries {
     }
 
     public int Size() {
-        return 25*2 + 4 + this.TableMetadata.Size();
+        return 25*2 + 4 + 4 + this.TableMetadata.Size();
     }
 }

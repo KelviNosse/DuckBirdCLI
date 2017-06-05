@@ -43,6 +43,7 @@ public class IOStreamDB extends RandomAccessFile{
             for(int k = 0; k < 25; k++) name += this.readChar();
             tableEntries[i].table_name = name.toCharArray();
             tableEntries[i].block_offset = this.readInt();
+            tableEntries[i].registers_offset = this.readInt();
             tableEntries[i].TableMetadata.table_size = this.readInt();
             tableEntries[i].TableMetadata.registers = this.readInt();
             tableEntries[i].TableMetadata.columns_count = this.readInt();

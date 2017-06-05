@@ -52,6 +52,7 @@ public class DirTable {
         for(int i = 0; i < this.tableEntries.length; i++){
             db_file.writeChars(new String(this.tableEntries[i].table_name));
             db_file.writeInt(this.tableEntries[i].block_offset);
+            db_file.writeInt(this.tableEntries[i].registers_offset);
             db_file.writeInt(this.tableEntries[i].TableMetadata.table_size);
             db_file.writeInt(this.tableEntries[i].TableMetadata.registers);
             db_file.writeInt(this.tableEntries[i].TableMetadata.columns_count);
