@@ -1,4 +1,3 @@
 # DuckBirdCLI
-Status: On construction...
 
-A small file database implementation in Java with cli interaction. It manages basic tables, database creation, and may contain playful ducks inside 🦆🦆
+A small file database implementation in Java with cli interaction. May contain playful ducks inside 🦆🦆
