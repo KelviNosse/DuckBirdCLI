@@ -2,6 +2,7 @@ package com.duckbird.core.sqltasks;
 
 import com.duckbird.core.errors.*;
 import com.duckbird.core.shared.Connection;
+import com.duckbird.core.sqltasks.handlers.DeleteRecord;
 import com.duckbird.core.sqltasks.handlers.Insertion;
 import com.duckbird.core.sqltasks.handlers.Selection;
 import com.duckbird.core.sqltasks.handlers.TableCreator;
@@ -9,6 +10,7 @@ import jdk.nashorn.internal.runtime.ParserException;
 import net.sf.jsqlparser.JSQLParserException;
 import net.sf.jsqlparser.expression.Expression;
 import net.sf.jsqlparser.expression.operators.conditional.AndExpression;
+import net.sf.jsqlparser.expression.operators.relational.EqualsTo;
 import net.sf.jsqlparser.expression.operators.relational.ExpressionList;
 import net.sf.jsqlparser.parser.CCJSqlParserManager;
 import net.sf.jsqlparser.schema.Column;
@@ -119,10 +121,13 @@ public class SQLEditor extends CCJSqlParserManager{
         System.out.println("Table name to drop: "+drop.getName());
     }
 
-    private void DeleteFromHandler(Delete delete){
-        System.out.println("Table name: "+delete.getTable().getName());
+    private void DeleteFromHandler(Delete delete) throws IOException, TableNotFound, InvalidColumnValue {
         Expression where = delete.getWhere();
-        System.out.println("Where: "+where.toString());
+        DeleteRecord deleteRecord = new DeleteRecord();
+        if(where instanceof EqualsTo){
+            EqualsTo equalsTo = (EqualsTo)where;
+            deleteRecord.deleteFrom(delete.getTable().getName(), equalsTo.getLeftExpression().toString(), equalsTo.getRightExpression().toString(), equalsTo.getStringExpression());
+        }
     }
 
     private void UpdateHandler(Update update){
@@ -142,7 +147,6 @@ public class SQLEditor extends CCJSqlParserManager{
     private void validateSQL(String sql) throws JSQLParserException, ParserException, InvalidColumnType, IOException, TableNotFound, NoSuchFreeSpace, InvalidDBFile, IncorrectTableValues, InvalidColumnValue {
         Statement statement = this.parse(new StringReader(sql));
         if(statement != null){
-            System.out.println(statement.toString());
             if(statement instanceof Select){
                 this.SelectHandler((Select)statement);
             }else if(statement instanceof CreateTable){

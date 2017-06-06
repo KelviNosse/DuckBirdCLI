@@ -7,12 +7,14 @@ import dnl.utils.text.table.TextTable;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DBTable {
     public String name;
     public DBColumns columns;
     private RandomAccessFile file;
+    private Object[][] rows;
     public DBTable(String name, DBColumns columns){
         this.name = name;
         this.columns = columns;
@@ -59,14 +61,22 @@ public class DBTable {
     }
 
     public void print(){
-        //Pretty print a table
         List<DBColumn> columns = this.columns.getList();
         String[] columnNames = new String[columns.size()];
-        Object[][] data = new Object[0][];
+        Object[][] data = this.rows;
         for(int i = 0; i < columns.size(); i++){
             columnNames[i] = columns.get(i).name;
         }
         TextTable tt = new TextTable(columnNames, data);
         tt.printTable();
+    }
+
+    public void setRows(int rows_len, int cols_len, LinkedList<String> rows){
+        this.rows = new Object[rows_len][cols_len];
+        for(int i = 0; i < rows_len; i++){
+            for(int k = 0; k < cols_len; k++){
+                this.rows[i][k] = rows.pop();
+            }
+        }
     }
 }

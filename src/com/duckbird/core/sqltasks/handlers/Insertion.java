@@ -39,10 +39,21 @@ public class Insertion {
         }
         if(values_size >= Connection.getSuperblock().blocksize) throw new NoSuchFreeSpace();
         int freeBlock = Connection.getBitmap().freeBlock();
-        entry.registers_offset = (int) (freeBlock*Connection.getSuperblock().blocksize);
+        if(entry.registers_offset == 0){
+            Connection.getBitmap().set(freeBlock);
+            entry.registers_offset = (int) (freeBlock*Connection.getSuperblock().blocksize);
+            db_file.seek(entry.registers_offset);
+        }else{
+            db_file.seek(entry.registers_offset);
+            int registers = entry.TableMetadata.registers;
+            for(int c = 0; c < column_count*registers; c++){
+                int reg_len = db_file.readInt();
+                String val = "";
+                for(int p = 0; p < reg_len; p++) val += db_file.readChar();
+            }
+        }
+        entry.TableMetadata.registers += 1;
         Connection.setDirTable(dirTable);
-        Connection.getBitmap().set(freeBlock);
-        db_file.seek(entry.registers_offset);
         for(int i = 0; i < values.size(); i++){
             db_file.writeInt(values.get(i).toString().length());
             db_file.writeChars(values.get(i).toString());

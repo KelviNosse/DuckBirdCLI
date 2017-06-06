@@ -10,6 +10,8 @@ import net.sf.jsqlparser.statement.select.SelectItem;
 
 import java.io.IOException;
 import java.io.RandomAccessFile;
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class Selection {
@@ -78,9 +80,21 @@ public class Selection {
                 ColumnType col_type = ColumnType.valueOf(type_name);
                 columns.add(col_name, col_type);
             }
-            //todo show registers too!
-            DBTable table = new DBTable(tableList.get(i), columns);
-            table.print();
+            int register_offset = dirTable.getEntry(tableList.get(i)).registers_offset;
+            int registers_count = dirTable.getEntry(tableList.get(i)).TableMetadata.registers;
+            if(register_offset != 0){
+                db_file.seek(register_offset);
+                DBTable table = new DBTable(tableList.get(i), columns);
+                LinkedList<String> registers = new LinkedList<String>();
+                for(int j = 0; j < registers_count*columns_count; j++){
+                    int len = db_file.readInt();
+                    String val = "";
+                    for(int k = 0; k < len; k++) val += db_file.readChar();
+                    registers.add(val);
+                }
+                table.setRows(registers_count, columns_count, registers);
+                table.print();
+            }
         }
     }
 }
